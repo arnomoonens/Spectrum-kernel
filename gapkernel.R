@@ -45,6 +45,7 @@ gapkernel2 <- function(lambda, p) {
   {
     x <- strsplit(x, split="")[[1]]
     y <- strsplit(y, split="")[[1]]
+    cat("splitting done")
     r <- length(x)
     c <- length(y)
     A <- matrix(0, nrow = r+1, ncol = c+1)
@@ -56,6 +57,7 @@ gapkernel2 <- function(lambda, p) {
         }
       }
     }
+    cat("First loop done")
     k <- c(1:p)
     for(l in c(2:p)) {
       k[l] <- 0
@@ -72,4 +74,12 @@ gapkernel2 <- function(lambda, p) {
     return(k[p])
   }
   return(new("kernel",.Data=gapkernelfunction,kpar=list(lambda = lambda, p = p)))
+}
+
+Rcpp::sourceCpp('gapkernel.cpp')
+makeCppKernel <- function(lambda, p) {
+  f <- function(x, y) {
+    return(cppKernel(x, y, lambda, p))
+  }
+  return(new("kernel",.Data=f,kpar=list(lambda = lambda, p = p)))
 }

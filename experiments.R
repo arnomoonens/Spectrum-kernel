@@ -1,9 +1,10 @@
 library(kernlab)
+source("gapkernel.R")
 
 data <- read.csv("data.csv", stringsAsFactors = FALSE)
 data <- data[-1]  # Remove first column (indices)
-data <- data[sample(nrow(data), round(0.2 * nrow(data))),]
-data <- subset(data, target<3)  # Only use three different target values
+data <- data[sample(nrow(data), round(0.1 * nrow(data))),]
+data <- subset(data, target<2)  # Only use three different target values
 
 data$target <- factor(data$target)
 
@@ -20,7 +21,8 @@ set.seed(6)
 data <- data[sample(1:N, N),]
 
 
-k <- stringdot("spectrum", length=5, normalized=T)
+#k <- stringdot("spectrum", length=5, normalized=T)
+k <- makeCppKernel(0.7, 5)
 K <- kernelMatrix(k, data$text)
 
 ntrain <- round(N*2/3)     # number of training examples
