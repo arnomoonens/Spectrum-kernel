@@ -6,12 +6,12 @@ using namespace Rcpp;
 double cppKernel(const std::string x, const std::string y, double lambda, int p) {
   int r = x.length();
   int c = y.length();
-  NumericMatrix A(r, c);
-  NumericMatrix B(r, c);
+  double A[r][c];
+  double B[r][c];
   for(int i = 0; i < r; i++) {
     for(int j = 0; j < c; j++)
       if(x[i] == y[j]) {
-        A(i, j) = pow(lambda, 2);
+        A[i][j] = pow(lambda, 2);
       }
   }
   double k[p+1];
@@ -19,10 +19,10 @@ double cppKernel(const std::string x, const std::string y, double lambda, int p)
     k[l] = 0;
     for(int i = 0; i < r-1; i++) {
       for(int j = 0; j < c-1; j++) {
-        B(i+1, j+1) = A(i+1, j+1) + lambda * B(i, j+1) + lambda * B(i+1, j) + pow(lambda, 2) * B(i, j);
+        B[i+1][j+1] = A[i+1][j+1] + lambda * B[i][j+1] + lambda * B[i+1][j] + pow(lambda, 2) * B[i][j];
         if(x[i] == y[j]) {
-          A(i + 1, j + 1) = pow(lambda, 2) * B(i, j);
-          k[l] = k[l] + A(i + 1, j + 1);
+          A[i + 1][j + 1] = pow(lambda, 2) * B[i][j];
+          k[l] = k[l] + A[i + 1][j + 1];
         }
       }
     }
