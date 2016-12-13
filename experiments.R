@@ -6,6 +6,8 @@ data <- data[-1]  # Remove first column (indices)
 data <- data[sample(nrow(data), round(0.1 * nrow(data))),]
 data <- subset(data, target<2)  # Only use three different target values
 
+data$text <- substr(data$text, 1, 750)  # Limit number of characters per text
+
 data$target <- factor(data$target)
 
 # Total number of training examples
@@ -43,3 +45,4 @@ y1 <- predict(svm.train,as.kernelMatrix(testK))
 table (pred=y1, truth=data$target[-tindex])
 
 cat('Error rate = ',100*sum(y1!=data$target[-tindex])/length(y1),'%')
+
