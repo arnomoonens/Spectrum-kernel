@@ -22,13 +22,13 @@ long double cppKernel(std::string x, std::string y, double lambda, unsigned int 
   }
   long double k[p+1];
   k[0] = 0;
-  for(int l = 1; l <= p; l++) {
+  for(int l = 2; l <= p; l++) {
     k[l] = 0;
-    for(i = 0; i < r; i++) {
-      for(j = 0; j < c; j++) {
-        B[i+1][j+1] = A[i][j] + lambda * B[i][j+1] + lambda * B[i+1][j] - pow(lambda, 2) * B[i][j];
+    for(i = 1; i <= r-1; i++) {
+      for(j = 1; j <= c-1; j++) {
+        B[i][j] = A[i][j] + lambda * B[i-1][j] + lambda * B[i][j-1] - pow(lambda, 2) * B[i-1][j-1];
         if(x[i] == y[j]) {
-          A[i][j] = pow(lambda, 2) * B[i][j];
+          A[i][j] = pow(lambda, 2) * B[i-1][j-1];
           k[l] = k[l] + A[i][j];
         }
       }
