@@ -20,7 +20,7 @@ long double cppKernel(std::string x, std::string y, double lambda, unsigned int 
       A[i][j] = (x[i] == y[j] ? pow(lambda, 2) : 0);
     }
   }
-  long double k[p+1];
+  long double* k = new long double[p+1];
   k[0] = 0;
   for(int l = 2; l <= p; l++) {
     k[l] = 0;
@@ -34,7 +34,16 @@ long double cppKernel(std::string x, std::string y, double lambda, unsigned int 
       }
     }
   }
-  return k[p];
+  delete[] B[0];
+  for(i = 0; i < r; i++) {
+    delete[] A[i];
+    delete[] B[i+1];
+  }
+  delete[] A;
+  delete[] B;
+  long double result = k[p];
+  delete[] k;
+  return result;
 }
 
 
