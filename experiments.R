@@ -1,4 +1,5 @@
 library(kernlab)
+library(tm)
 source("gapkernel.R")
 
 data <- read.csv("data.csv", stringsAsFactors = FALSE)
@@ -6,7 +7,12 @@ data <- data[-1]  # Remove first column (indices)
 data <- data[sample(nrow(data), round(0.1 * nrow(data))),]
 data <- subset(data, target<2)  # Only use three different target values
 
-data$text <- substr(data$text, 1, 750)  # Limit number of characters per text
+docs <- Corpus(VectorSource(data$text))
+docs <- tm_map(docs, removePunctuation)
+docs <- tm_map(docs, stripWhitespace)
+data$text <- sapply(docs, function(x){x$content})
+
+data$text <- substr(data$text, 1, 600)  # Limit number of characters per text
 
 data$target <- factor(data$target)
 
@@ -24,7 +30,7 @@ data <- data[sample(1:N, N),]
 
 
 #k <- stringdot("spectrum", length=5, normalized=T)
-k <- makeCppKernel(0.7, 5)
+k <- makeCppKernel(0.7, 2)
 K <- kernelMatrix(k, data$text)
 
 ntrain <- round(N*2/3)     # number of training examples
