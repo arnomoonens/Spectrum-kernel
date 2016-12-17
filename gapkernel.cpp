@@ -49,6 +49,5 @@ long double cppKernel(std::string x, std::string y, double lambda, unsigned int 
 
 // (test) code to run after compilation
 /*** R
-x <- "dfqsdf qdsf qsdfqds qsdf  dfqsdfdf qdsf qsqsd f qsd f qsd fd qsqsd f qsd f qsd fd df qdsf qsqsd f qsd f qsd fd qsdf qsdf qdsf qsqsd f qsd f qsd fd qsdf  dfqsdf qdsf qsdfqds f qsd f qsd f qsd fd qsdf  dfqsdf qdsf qsdfqds f qsd f qsd f qsd fd qsdf  dfqsdf qdsf qsdfqds f qsd f qsd f qsd fd qsdf  dfqsdf qdsf qsdfqds f qsd f qsd f qsd fd qsdf  dfqsdf qdsf qsdfqds f qsd f qsd f qsd fd qsdf  dfqsdf qdsf qsdfqds f qsd f qsd f qsd fd qsdf  dfqsdf qdsf qsdfqds f qsd f qsd f qsd fd qsdf  dfqsdf qdsf qsdfqds f qsd f qsd f qsd fd qsdf  dfqsdf qdsf qsdfqds f qsd f qsd f qsd fd qsdf  "
-cppKernel(x, x, 0.7, 2)
+cppKernel("science is organized knowledge", "wisdom is organized life", 0.7, 2)
 */
