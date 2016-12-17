@@ -56,7 +56,7 @@ testK3 <- testK3[,SVindex(svm.train3),drop=FALSE]
 # Warning: here we MUST convert the matrix testK to a 'kernelMatrix'
 y1 <- predict(svm.train,as.kernelMatrix(testK))
 y2 <- predict(svm.train2,as.kernelMatrix(testK2))
-y3 <- predict(svm.train2,as.kernelMatrix(testK3))
+y3 <- predict(svm.train3,as.kernelMatrix(testK3))
 
 table (pred=y1, truth=data$target[-tindex])
 table (pred=y2, truth=data$target[-tindex])
