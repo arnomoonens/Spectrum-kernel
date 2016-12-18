@@ -19,8 +19,7 @@ getClusters <- function( kernelMatrix, k, bool ){
   sc <- kkmeans(K, reuters$Topic, centers = k, nstart = 10)
   if(bool==TRUE){
     for(x in 1:30){ vec[x] = sc[x]}
-    table(vec, reuters$Topic) 
-    #print ( withinss(sc) )
+    list(table(vec, reuters$Topic), withinss(sc), sum(withinss(sc)) )
   }else {
     sum (withinss(sc))
   }
@@ -49,6 +48,12 @@ bestDecayFactor <- function( Kernel, Data, cluster, range ){
   persp3D(z = M, theta = 120)
   which(M == min(M), arr.ind = TRUE) 
 }
+writeInFile<- function(text,R){
+  write(text,file = 'ResultsClustering.txt', append=TRUE)
+  write.table( R[[1]],file = 'ResultsClustering.txt', append=TRUE ,sep = ",")
+  write(R[[2]],file = 'ResultsClustering.txt', append=TRUE)
+  write(R[[3]],file = 'ResultsClustering.txt', append=TRUE)
+}
 
 write( paste("Experiment with ",as.character(n)," texts"),file = 'ResultsClustering.txt', append=TRUE)
 clusters = 3
@@ -57,23 +62,21 @@ n = bestSubSeqLength("spectrum", reuters$Content, clusters)
 k <- stringdot("spectrum",length=5)
 K <- kernelMatrix(k, reuters$Content)
 R<-getClusters(K,clusters,T)
-write("SPECTRUM KERNEL",file = 'ResultsClustering.txt', append=TRUE)
-write.table( R,file = 'ResultsClustering.txt', append=TRUE ,sep = ",")
+writeInFile("SPECTRUM KERNEL",R)
+
 
 n = bestSubSeqLength("boundrange", reuters$Content, clusters)
 k <- stringdot("boundrange",length=n)
 K <- kernelMatrix(k, reuters$Content)
 R<-getClusters(K,clusters,T)
-write("BOUNDRANGE KERNEL",file = 'ResultsClustering.txt', append=TRUE)
-write.table( R,file = 'ResultsClustering.txt', append=TRUE ,sep = ",")
+writeInFile("BOUNDRANGE KERNEL",R)
 
 lamdas = seq(1.2,2,0.2)
 M <- bestDecayFactor("exponential",reuters$Content,clusters, lamdas)
 k <- stringdot("exponential",length= M[2], lambda = lamdas[M[1]] )
 K <- kernelMatrix(k, reuters$Content)
 R<-getClusters(K,clusters,T)
-write("EXPONENTIAL KERNEL",file = 'ResultsClustering.txt', append=TRUE)
-write.table( R,file = 'ResultsClustering.txt', append=TRUE ,sep = ",")
+writeInFile("EXPONENTIAL KERNEL",R)
 
 
 bestPossibleClustering <- function(lambdas, n , data ,k ){
@@ -91,12 +94,10 @@ fc = bestPossibleClustering(lambdas, 10, reuters$Content,clusters)
 k <- makeCppKernel(lambdas[fc[1]], fc[2])
 K <- kernelMatrix(k3, reuters$Content)
 R<-getClusters(K,clusters,T)
-write("GAP KERNEL",file = 'ResultsClustering.txt', append=TRUE)
-write.table( R,file = 'ResultsClustering.txt', append=TRUE ,sep = ",")
+writeInFile("GAP KERNEL",R)
 
 k <- new("kernel", .Data=coSequenceKernelCPP, kpar=list())
 K <- kernelMatrix(k ,reuters$Content)
 R <-getClusters(K,clusters,T)
-write("COSEQUENCE KERNEL",file = 'ResultsClustering.txt', append=TRUE)
-write.table( R,file = 'ResultsClustering.txt', append=TRUE ,sep = ",")
+writeInFile("COSEQUENCE KERNEL",R)
 

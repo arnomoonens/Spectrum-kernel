@@ -1,1 +1,36 @@
 Experiment with  30  texts
+SPECTRUM KERNEL
+"coffee","crude","grain"
+"1",1,4,5
+"2",0,6,4
+"3",1,2,7
+9.842143 10.90387 9.562498
+30.30851
+BOUNDRANGE KERNEL
+"coffee","crude","grain"
+"1",1,6,3
+"2",1,3,6
+"3",0,3,7
+10 10.4 10.4
+30.8
+EXPONENTIAL KERNEL
+"coffee","crude","grain"
+"1",0,6,8
+"2",0,0,2
+"3",2,6,6
+2.549396 0.5832755 2.469911
+5.602582
+GAP KERNEL
+"coffee","crude","grain"
+"1",2,10,6
+"2",0,1,7
+"3",0,1,3
+3.40944 1.095178 1.145982
+5.650599
+COSEQUENCE KERNEL
+"coffee","crude","grain"
+"1",0,3,6
+"2",1,6,4
+"3",1,3,6
+0.7453619 1.026961 0.760742
+2.533065
