@@ -3,7 +3,7 @@ source("gapkernel.R")
 
 data <- read.csv("data.csv", stringsAsFactors = FALSE)
 data <- data[-1]  # Remove first column (indices)
-data <- data[sample(nrow(data), round(0.025 * nrow(data))),]
+data <- data[sample(nrow(data), round(0.05 * nrow(data))),]
 data <- subset(data, target<2)  # Only use three different target values
 
 data$target <- factor(data$target)
