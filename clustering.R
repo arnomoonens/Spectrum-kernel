@@ -1,8 +1,11 @@
 library(kernlab)
 library(ggplot2)
 require(plot3D)
+source("coSequenceCPP.R")
+source("gapkernel.R")
+
 set.seed(6)
-n = 100
+n = 30
 reuters <- read.table("reuters.txt.gz", header=T)
 reuters <- reuters[reuters$Topic == "crude" | reuters$Topic == "grain" | reuters$Topic == "coffee",]
 reuters <- reuters[sample(1:nrow(reuters),n),]
@@ -12,33 +15,34 @@ levels(reuters$Topic)
 length(reuters$Topic)
 table(reuters$Topic)
 
-getClusters <- function(kernelMatrix, k , bool){
-  sc <- kkmeans(K, reuters$Topic,centers=k, nstart = 20)
-  if(bool){
-    print( table(sc, reuters$Topic) )
+getClusters <- function( kernelMatrix, k, bool ){
+  sc <- kkmeans(K, reuters$Topic, centers = k, nstart = 10)
+  if(bool==TRUE){
+    for(x in 1:30){ vec[x] = sc[x]}
+    print( table(vec, reuters$Topic) )
     print ( withinss(sc) )
   }else {
     sum (withinss(sc))
   }
 }
-impactK <- function(M,s,l,k,data){
+impactK <- function( M,s,l,k,data, ... ){
   vec <- sapply(seq(2,s), function(x){ 
                     kp <- stringdot(M, length = x, lambda = l)
                     K <- kernelMatrix(kp,data)
                     getClusters(K,k,FALSE) })
+
 }
-minLength<- function(TextSet){
+minLength<- function( TextSet ){
   min( sapply( TextSet, function(x){ nchar(x) } ) )
 }
-bestSubSeqLength <- function(Kernel,Data,clusters,....){
+bestSubSeqLength <- function( Kernel,Data,clusters, ... ){
   values <- impactK(Kernel, minLength(Data),1, clusters, Data)
-  if(!bool){
-    plot(seq(1,length(values)),values, 
+  plot(seq(1,length(values)),values, 
        main = paste(Kernel,"-kernel"),xlab = "length n", ylab="sum of ss")
-  }
+  
   which.min(values)
 }
-bestDecayFactor <- function(Kernel, Data, cluster, range){
+bestDecayFactor <- function( Kernel, Data, cluster, range ){
   M <- matrix(nrow = length(range),ncol = minLength(Data) -1 )
   for(i in 1:length(range)) {
     M[i,] <- impactK(Kernel, minLength(Data), range[i], clusters, Data)}
@@ -49,22 +53,38 @@ bestDecayFactor <- function(Kernel, Data, cluster, range){
 clusters = 3
 set.seed(20)
 n = bestSubSeqLength("spectrum", reuters$Content, clusters)
-k <- stringdot("spectrum",length=n)
+k <- stringdot("spectrum",length=5)
 K <- kernelMatrix(k, reuters$Content)
 getClusters(K,clusters,T)
 
 n = bestSubSeqLength("boundrange", reuters$Content, clusters)
 k <- stringdot("boundrange",length=n)
 K <- kernelMatrix(k, reuters$Content)
-getClusters(K)
+getClusters(K,clusters,T)
 
 lamdas = seq(1.2,2,0.2)
 M <- bestDecayFactor("exponential",reuters$Content,clusters, lamdas)
 k <- stringdot("exponential",length= M[2], lambda = lamdas[M[1]] )
 K <- kernelMatrix(k, reuters$Content)
-getClusters(K)
+getClusters(K,clusters,T)
 
 
+bestPossibleClustering <- function(lambdas, n , data ,k ){
+  M <- matrix(nrow = length(lambdas), ncol = n-1)
+  for(i in 1:length(range)) {
+    M[i,] =sapply(seq(2,n), function(x){ kp = makeCppKernel(lambdas[i],x) 
+                                         K <- kernelMatrix(kp, data)
+                                         getClusters(K,k,FALSE) })
+  }
+  which(M == min(M), arr.ind = TRUE) 
+}
 
+lambdas = seq(0.1,0.9,0.1)
+fc = bestPossibleClustering(lambdas, 10, reuters$Content,clusters)
+k <- makeCppKernel(lambdas[fc[1]], fc[2])
+K <- kernelMatrix(k3, reuters$Content)
+getClusters(K,clusters,T)
 
-
+k <- new("kernel", .Data=coSequenceKernelCPP, kpar=list())
+K <- kernelMatrix(k ,reuters$Content)
+getClusters(K,clusters,T)
