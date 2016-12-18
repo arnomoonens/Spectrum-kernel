@@ -5,10 +5,10 @@ source("coSequenceCPP.R")
 source("gapkernel.R")
 
 set.seed(6)
-n = 30
+N= 30
 reuters <- read.table("reuters.txt.gz", header=T)
 reuters <- reuters[reuters$Topic == "crude" | reuters$Topic == "grain" | reuters$Topic == "coffee",]
-reuters <- reuters[sample(1:nrow(reuters),n),]
+reuters <- reuters[sample(1:nrow(reuters),N),]
 reuters$Content <- as.character(reuters$Content)  
 reuters$Topic <- factor(reuters$Topic)            
 levels(reuters$Topic)
@@ -18,7 +18,8 @@ table(reuters$Topic)
 getClusters <- function( kernelMatrix, k, bool ){
   sc <- kkmeans(K, reuters$Topic, centers = k, nstart = 10)
   if(bool==TRUE){
-    for(x in 1:30){ vec[x] = sc[x]}
+    vec <-vector(length = N)
+    for(x in 1:N){ vec[x] = sc[x]}
     list(table(vec, reuters$Topic), withinss(sc), sum(withinss(sc)) )
   }else {
     sum (withinss(sc))
@@ -55,7 +56,8 @@ writeInFile<- function(text,R){
   write(R[[3]],file = 'ResultsClustering.txt', append=TRUE)
 }
 
-write( paste("Experiment with ",as.character(n)," texts"),file = 'ResultsClustering.txt', append=TRUE)
+write( paste("Experiment with ",as.character(N)," texts"),file = 'ResultsClustering.txt', append=TRUE)
+write.table(table(reuters$Topic),file = 'ResultsClustering.txt', append=TRUE ,sep = ",")
 clusters = 3
 set.seed(20)
 n = bestSubSeqLength("spectrum", reuters$Content, clusters)
@@ -81,7 +83,7 @@ writeInFile("EXPONENTIAL KERNEL",R)
 
 bestPossibleClustering <- function(lambdas, n , data ,k ){
   M <- matrix(nrow = length(lambdas), ncol = n-1)
-  for(i in 1:length(range)) {
+  for(i in 1:length(lambdas)) {
     M[i,] =sapply(seq(2,n), function(x){ kp = makeCppKernel(lambdas[i],x) 
                                          K <- kernelMatrix(kp, data)
                                          getClusters(K,k,FALSE) })
@@ -92,7 +94,7 @@ bestPossibleClustering <- function(lambdas, n , data ,k ){
 lambdas = seq(0.1,0.9,0.1)
 fc = bestPossibleClustering(lambdas, 10, reuters$Content,clusters)
 k <- makeCppKernel(lambdas[fc[1]], fc[2])
-K <- kernelMatrix(k3, reuters$Content)
+K <- kernelMatrix(k, reuters$Content)
 R<-getClusters(K,clusters,T)
 writeInFile("GAP KERNEL",R)
 
