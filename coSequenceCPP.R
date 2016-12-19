@@ -1,4 +1,3 @@
-library(stringr)
 library(kernlab)
 library(Matrix)
 
@@ -6,7 +5,7 @@ Rcpp::sourceCpp('getConsequences.cpp')
 kernel<- function(x,y){
   index.x <- vector(mode="list", length = 27)
   index.y <- vector(mode="list", length = 27)
-  get <- function(x,i) {substring(x,i,i)}
+  get <- function(x,i) {substr(x,i,i)}
   map <- function(x) { match( x, letters, nomatch = 27 ) }#use sapply
   #mapply(function(x,y) {index.x[[map(x)]] = c(index.x[[ map(x) ]], y ) }, x, 1:nchar(x) )
   #mapply(function(x,y) {index.x[[map(x)]] = c(index.x[[ map(x) ]], y ) }, y, 1:nchar(y) )
