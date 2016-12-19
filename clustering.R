@@ -66,7 +66,6 @@ K <- kernelMatrix(k, reuters$Content)
 R<-getClusters(K,clusters,T)
 writeInFile("SPECTRUM KERNEL",R)
 
-#n = bestSubSeqLength("CONSTANT", reuters$Content, clusters)
 k <- stringdot("CONSTANT")
 K <- kernelMatrix(k, reuters$Content)
 R<-getClusters(K,clusters,T)

@@ -1,12 +1,9 @@
-set.seed(6046)
 library(stringr)
 library(kernlab)
 library(Matrix)
 
 Rcpp::sourceCpp('getConsequences.cpp')
 kernel<- function(x,y){
-  x <- tolower(x)
-  y <- tolower(y)
   index.x <- vector(mode="list", length = 27)
   index.y <- vector(mode="list", length = 27)
   get <- function(x,i) {substring(x,i,i)}

@@ -45,3 +45,8 @@ K <- kernelMatrix(k ,reuters$Content)
 findBestK(K,limit,"CONNECT",kReal ) 
 
 
+k <- makeCppKernel(lambdas[fc[1]], fc[2])
+K <- kernelMatrix(k, reuters$Content)
+findBestK(K,limit,"GAP",kReal ) 
+
+
