@@ -63,3 +63,227 @@ EXPONENTIAL KERNEL
 "3",1,1,8
 3.459441 0.6432197 1.589829
 5.692489
+GAP KERNEL
+"coffee","crude","grain"
+"1",1,11,6
+"2",0,0,2
+"3",1,1,8
+3.459441 0.6432197 1.589829
+5.692489
+COSEQUENCE KERNEL
+"coffee","crude","grain"
+"1",1,2,5
+"2",1,6,4
+"3",0,4,7
+0.6444009 1.133269 0.8730311
+2.6507
+
+
+Experiment with  40  texts
+"Var1","Freq"
+"1","coffee",2
+"2","crude",15
+"3","grain",23
+SPECTRUM KERNEL
+"coffee","crude","grain"
+"1",0,9,5
+"2",0,4,9
+"3",2,2,9
+14.42857 12.76923 12.15385
+39.35165
+BOUNDRANGE KERNEL
+"coffee","crude","grain"
+"1",1,3,10
+"2",0,5,8
+"3",1,7,5
+14.28571 12.46154 13.38462
+40.13187
+EXPONENTIAL KERNEL
+"coffee","crude","grain"
+"1",0,1,8
+"2",0,0,2
+"3",2,14,13
+1.201779 0.6731276 5.889051
+7.763957
+Experiment with  40  texts
+"Var1","Freq"
+"1","coffee",2
+"2","crude",15
+"3","grain",23
+SPECTRUM KERNEL
+"coffee","crude","grain"
+"1",2,3,9
+"2",0,7,6
+"3",0,5,8
+14.28571 13.53846 13.23077
+41.05495
+Experiment with  35  texts
+"Var1","Freq"
+"1","coffee",2
+"2","crude",13
+"3","grain",20
+SPECTRUM KERNEL
+"coffee","crude","grain"
+"1",1,5,6
+"2",0,5,7
+"3",1,3,7
+12.16667 12.33187 11.81826
+36.31679
+CONSTANT KERNEL
+"coffee","crude","grain"
+"1",1,3,8
+"2",0,6,6
+"3",1,4,6
+12.00018 12.33333 10.72727
+35.06078
+CONSTANT KERNEL
+"coffee","crude","grain"
+"1",0,4,8
+"2",2,4,6
+"3",0,5,6
+12.16667 12.00332 11.63636
+35.80635
+BOUNDRANGE KERNEL
+"coffee","crude","grain"
+"1",1,7,4
+"2",0,5,7
+"3",1,1,9
+12.17283 12.26113 11.4436
+35.87756
+COSEQUENCE KERNEL
+"coffee","crude","grain"
+"1",0,5,7
+"2",0,6,6
+"3",2,2,7
+1.432918 1.085134 1.297332
+3.815384
+Experiment with  35  texts
+"Var1","Freq"
+"1","coffee",2
+"2","crude",13
+"3","grain",20
+SPECTRUM KERNEL
+"coffee","crude","grain"
+"1",1,6,5
+"2",0,5,7
+"3",1,2,8
+12.16667 12.33333 11.27273
+35.77273
+CONSTANT KERNEL
+"coffee","crude","grain"
+"1",1,5,6
+"2",1,3,8
+"3",0,5,6
+12.33333 12.5 11.27273
+36.10606
+BOUNDRANGE KERNEL
+"coffee","crude","grain"
+"1",0,7,5
+"2",1,4,7
+"3",1,2,8
+12.17266 12.41967 11.45277
+36.0451
+EXPONENTIAL KERNEL
+"coffee","crude","grain"
+"1",0,1,9
+"2",0,0,2
+"3",2,12,9
+1.2939 0.6031353 4.476659
+6.373694
+GAP KERNEL
+"coffee","crude","grain"
+"1",0,4,10
+"2",1,4,5
+"3",1,5,5
+0 0 0
+0
+COSEQUENCE KERNEL
+"coffee","crude","grain"
+"1",2,7,3
+"2",0,5,7
+"3",0,1,10
+1.472956 1.172667 1.237884
+3.883506
+GAP KERNEL
+"coffee","crude","grain"
+"1",0,5,7
+"2",2,3,6
+"3",0,5,7
+0 0 0
+0
+Experiment with  50  texts
+"Var1","Freq"
+"1","coffee",4
+"2","crude",21
+"3","grain",25
+SPECTRUM KERNEL
+"coffee","crude","grain"
+"1",2,4,14
+"2",0,0,2
+"3",2,17,9
+2.625596 0.568179 4.667142
+7.860916
+Experiment with  50  texts
+"Var1","Freq"
+"1","coffee",4
+"2","crude",21
+"3","grain",25
+Experiment with  50  texts
+"Var1","Freq"
+"1","coffee",4
+"2","crude",21
+"3","grain",25
+Experiment with  50  texts
+"Var1","Freq"
+"1","coffee",5
+"2","crude",16
+"3","grain",29
+SPECTRUM KERNEL
+"coffee","crude","grain"
+"1",1,2,14
+"2",2,6,9
+"3",2,8,6
+17.76471 17.05882 16.25
+51.07353
+CONSTANT KERNEL
+"coffee","crude","grain"
+"1",2,8,7
+"2",2,2,13
+"3",1,6,9
+17.17647 17.17647 16.375
+50.72794
+BOUNDRANGE KERNEL
+"coffee","crude","grain"
+"1",2,5,10
+"2",2,4,11
+"3",1,7,8
+17.29416 17.29412 16.74924
+51.33752
+EXPONENTIAL KERNEL
+"coffee","crude","grain"
+"1",2,1,7
+"2",3,12,9
+"3",0,3,13
+2.692944 6.488502 4.597912
+13.77936
+GAP KERNEL
+"coffee","crude","grain"
+"1",0,6,13
+"2",4,6,8
+"3",1,4,8
+0 0 0
+0
+COSEQUENCE KERNEL
+"coffee","crude","grain"
+"1",2,7,6
+"2",2,6,13
+"3",1,3,10
+3.539551 4.095767 3.071127
+10.70644
+GAP KERNEL
+"coffee","crude","grain"
+"1",2,7,6
+"2",2,6,13
+"3",1,3,10
+3.539551 4.095767 3.071127
+10.70644

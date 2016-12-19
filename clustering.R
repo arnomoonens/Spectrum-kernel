@@ -5,7 +5,7 @@ source("coSequenceCPP.R")
 source("gapkernel.R")
 
 set.seed(6)
-N= 30
+N= 50
 reuters <- read.table("reuters.txt.gz", header=T)
 reuters <- reuters[reuters$Topic == "crude" | reuters$Topic == "grain" | reuters$Topic == "coffee",]
 reuters <- reuters[sample(1:nrow(reuters),N),]
@@ -61,11 +61,16 @@ write.table(table(reuters$Topic),file = 'ResultsClustering.txt', append=TRUE ,se
 clusters = 3
 set.seed(20)
 n = bestSubSeqLength("spectrum", reuters$Content, clusters)
-k <- stringdot("spectrum",length=5)
+k <- stringdot("spectrum",length=n)
 K <- kernelMatrix(k, reuters$Content)
 R<-getClusters(K,clusters,T)
 writeInFile("SPECTRUM KERNEL",R)
 
+#n = bestSubSeqLength("CONSTANT", reuters$Content, clusters)
+k <- stringdot("CONSTANT")
+K <- kernelMatrix(k, reuters$Content)
+R<-getClusters(K,clusters,T)
+writeInFile("CONSTANT KERNEL",R)
 
 n = bestSubSeqLength("boundrange", reuters$Content, clusters)
 k <- stringdot("boundrange",length=n)
@@ -92,10 +97,9 @@ bestPossibleClustering <- function(lambdas, n , data ,k ){
 }
 
 lambdas = seq(0.1,0.9,0.1)
-fc = bestPossibleClustering(lambdas, 10, reuters$Content,clusters)
+fc = bestPossibleClustering(lambdas, 4, reuters$Content,clusters)
 k <- makeCppKernel(lambdas[fc[1]], fc[2])
 K <- kernelMatrix(k, reuters$Content)
-R<-getClusters(K,clusters,T)
 writeInFile("GAP KERNEL",R)
 
 k <- new("kernel", .Data=coSequenceKernelCPP, kpar=list())

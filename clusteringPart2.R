@@ -32,5 +32,5 @@ table(reuters$Topic)
 
 k <- new("kernel", .Data=coSequenceKernelCPP, kpar=list())
 K <- kernelMatrix(k ,reuters$Content)
-findBestK(K,50,"CONNECT",kReal )
+findBestK(K,50,"CONNECT",kReal ) 
 
