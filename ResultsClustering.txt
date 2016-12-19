@@ -287,3 +287,45 @@ GAP KERNEL
 "3",1,3,10
 3.539551 4.095767 3.071127
 10.70644
+Experiment with  50  texts
+"Var1","Freq"
+"1","coffee",4
+"2","crude",21
+"3","grain",25
+SPECTRUM KERNEL
+"coffee","crude","grain"
+"1",1,6,10
+"2",0,8,9
+"3",3,7,6
+17.29412 17.05882 16.5
+50.85294
+Experiment with  50  texts
+"Var1","Freq"
+"1","coffee",4
+"2","crude",21
+"3","grain",25
+Experiment with  50  texts
+"Var1","Freq"
+"1","coffee",4
+"2","crude",21
+"3","grain",25
+Experiment with  50  texts
+"Var1","Freq"
+"1","coffee",4
+"2","crude",21
+"3","grain",25
+Experiment with  50  texts
+"Var1","Freq"
+"1","coffee",4
+"2","crude",21
+"3","grain",25
+Experiment with  50  texts
+"Var1","Freq"
+"1","coffee",4
+"2","crude",21
+"3","grain",25
+Experiment with  50  texts
+"Var1","Freq"
+"1","coffee",4
+"2","crude",21
+"3","grain",25
