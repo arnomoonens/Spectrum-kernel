@@ -59,6 +59,8 @@ folds.indices <- 1:k
 N.train <- NROW(data.train)
 s <- sample(rep(1:k, length=N.train), N.train, replace=FALSE) # Say for each data point in which fold it needs to go
 
+
+# Gap kernel
 subseq.lengths <- c(2:6)
 lambdas <- c(0.3, 0.5, 0.7, 1.0)
 configs <- matrix(nrow=0, ncol=2, dimnames=list(c(), c("lambda", "p")))
@@ -98,6 +100,43 @@ cat("Best lambda =", best.lambda)
 data.test <- data[-train.indices,]
 
 kernel = makeCppKernel(best.lambda, best.subseq.length)
+model <- ksvm(data.train$text, data.train$target, type="C-svc", scaled=c(), kernel=kernel)
+
+predictions <- predict(model, data.test$text)
+error.test <- calculate.error(predictions, data.test$target)
+cat("Error on test set:", error.test)
+
+# Spectrum kernel
+
+substring.lengths <- c(2:6)
+mean.errors <- c()
+for (substring.length in substring.lengths) {
+  kernel <- stringdot("sprectum", length = substring.length)
+  K <- kernelMatrix(kernel, data.train$text)
+  cv.errors <- c()
+  for (idx in folds.indices) {
+    train.K <- K[s != idx,s != idx]
+    train.y <- data.train[s != idx,]$target
+    
+    model <- ksvm(train.K, train.y, type="C-svc", scaled=c(), kernel="matrix")
+    
+    test.K <- K[s == idx,s != idx]
+    test.K <- test.K[, SVindex(model), drop=FALSE]
+    test.y <- data.train[s == idx,]$target
+    
+    preds <- predict(model, as.kernelMatrix(test.K))
+    error.cv <- calculate.error(preds, test.y)
+    cv.errors <- c(cv.errors, error.cv)
+  }
+  m <- mean(cv.errors)
+  mean.errors <- c(mean.errors, m)
+}
+min.error.idx <- which.min(mean.errors)
+best.substring.length <- subseq.lengths[[min.error.idx]]
+cat("Best substring length =", best.substring.length)
+data.test <- data[-train.indices,]
+
+kernel = stringdot("sprectum", length = best.substring.length)
 model <- ksvm(data.train$text, data.train$target, type="C-svc", scaled=c(), kernel=kernel)
 
 predictions <- predict(model, data.test$text)
