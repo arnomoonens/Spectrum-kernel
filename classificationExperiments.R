@@ -212,43 +212,35 @@ const.error.test <- calculate.error(const.predictions, data.test$target)
 cat("Error on test set:", const.error.test)
 
 # Exponential kernel
-substring.lengths <- c(2:6)
 lambdas <- c(1.1, 1.3, 1.5, 1.7, 1.9)
-exp.configs <- matrix(nrow=0, ncol=2, dimnames=list(c(), c("lambda", "length")))
 exp.mean.errors <- c()
-for (substring.length in substring.lengths) {
-  for(lambda in lambdas) {
-    exp.configs <- rbind(exp.configs, c(lambda, substring.length))
-    kernel <- stringdot("exponential", length = substring.length, lambda = lambda)
-    K <- kernelMatrix(kernel, data.train$text)
-    cv.errors <- c()
-    for (idx in folds.indices) {
-      train.K <- K[s != idx,s != idx]
-      train.y <- data.train[s != idx,]$target
-      
-      model <- ksvm(train.K, train.y, type="C-svc", scaled=c(), kernel="matrix")
-      
-      test.K <- K[s == idx,s != idx]
-      test.K <- test.K[, SVindex(model), drop=FALSE]
-      test.y <- data.train[s == idx,]$target
-      
-      preds <- predict(model, as.kernelMatrix(test.K))
-      error.cv <- calculate.error(preds, test.y)
-      cv.errors <- c(cv.errors, error.cv)
-    }
-    m <- mean(cv.errors)
-    exp.mean.errors <- c(exp.mean.errors, m)
+for (lambda in lambdas) {
+  kernel <- stringdot("exponential", lambda = lambda, length = 2)
+  K <- kernelMatrix(kernel, data.train$text)
+  cv.errors <- c()
+  for (idx in folds.indices) {
+    train.K <- K[s != idx,s != idx]
+    train.y <- data.train[s != idx,]$target
+    
+    model <- ksvm(train.K, train.y, type="C-svc", scaled=c(), kernel="matrix")
+    
+    test.K <- K[s == idx,s != idx]
+    test.K <- test.K[, SVindex(model), drop=FALSE]
+    test.y <- data.train[s == idx,]$target
+    
+    preds <- predict(model, as.kernelMatrix(test.K))
+    error.cv <- calculate.error(preds, test.y)
+    cv.errors <- c(cv.errors, error.cv)
   }
+  m <- mean(cv.errors)
+  exp.mean.errors <- c(exp.mean.errors, m)
 }
-exp.min.error.idx <- which.min(exp.mean.errors)
-exp.best.config <- exp.configs[min.error.idx,]
-exp.best.substring.length <- exp.best.config[["length"]]
-exp.best.lambda <- exp.best.config[["lambda"]]
-cat("Best substring length =", exp.best.substring.length)
+min.error.idx <- which.min(exp.mean.errors)
+exp.best.lambda <- lambdas[[min.error.idx]]
 cat("Best lambda =", exp.best.lambda)
 
-exp.kernel <- stringdot("exponential", length = exp.substring.length, lambda = exp.best.lambda)
-exp.model <- ksvm(data.train$text, data.train$target, type="C-svc", scaled=c(), kernel=kernel)
+exp.kernel = stringdot("exponential", lambda = exp.best.lambda)
+exp.model <- ksvm(data.train$text, data.train$target, type="C-svc", scaled=c(), kernel=exp.kernel)
 
 exp.predictions <- predict(exp.model, data.test$text)
 exp.error.test <- calculate.error(exp.predictions, data.test$target)
@@ -256,7 +248,7 @@ cat("Error on test set:", exp.error.test)
 
 # Cosequence kernel
 coseq.kernel <- new("kernel", .Data=coSequenceKernelCPP, kpar=list())
-exp.model <- ksvm(data.train$text, data.train$target, type="C-svc", scaled=c(), kernel=coseq.kernel)
+coseq.model <- ksvm(data.train$text, data.train$target, type="C-svc", scaled=c(), kernel=coseq.kernel)
 
 coseq.predictions <- predict(coseq.model, data.test$text)
 coseq.error.test <- calculate.error(coseq.predictions, data.test$target)
