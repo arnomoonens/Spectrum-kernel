@@ -5,8 +5,8 @@ source("connect.R")
 source("gapkernel.R")
 
 set.seed(6)
-N= 30
-reuters <- read.table("reuters.txt.gz", header=T)
+N= 20
+reuters <- read.table("reuters.txt.gz", header=TRUE)
 reuters <- reuters[reuters$Topic == "crude" | reuters$Topic == "grain" | reuters$Topic == "coffee",]
 reuters <- reuters[sample(1:nrow(reuters),N),]
 reuters$Content <- as.character(reuters$Content)  
@@ -64,12 +64,12 @@ set.seed(20)
 n = bestSubSeqLength("spectrum", reuters$Content, clusters)
 k <- stringdot("spectrum",length=n)
 K <- kernelMatrix(k, reuters$Content)
-R<-getClusters(K,clusters,T)
+R<-getClusters(K,clusters,TRUE)
 writeInFile("SPECTRUM KERNEL",R)
 
 k <- stringdot("constant",length=2)
 K <- kernelMatrix(k, reuters$Content)
-R<-getClusters(K,clusters,T)
+R<-getClusters(K,clusters,TRUE)
 writeInFile("CONSTANT KERNEL",R)
 
 n = bestSubSeqLength("boundrange", reuters$Content, clusters)
@@ -104,6 +104,6 @@ writeInFile("GAP KERNEL",R)
 
 k <- new("kernel", .Data=connect, kpar=list())
 K <- kernelMatrix(k ,reuters$Content)
-R <-getClusters(K,clusters,T)
+R <-getClusters(K,clusters,TRUE)
 writeInFile("CONNECT",R)
 

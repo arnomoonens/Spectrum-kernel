@@ -1,5 +1,10 @@
-Experiment with  30  texts
+Experiment with  10  texts
 "Var1","Freq"
-"1","coffee",2
-"2","crude",12
-"3","grain",16
+"1","coffee",1
+"2","crude",4
+"3","grain",5
+Experiment with  20  texts
+"Var1","Freq"
+"1","coffee",1
+"2","crude",8
+"3","grain",11

@@ -20,7 +20,7 @@ findBestK <- function(K, limit,name, kReal){
 
 N = 30
 
-reuters <- read.table("reuters.txt.gz", header=T)
+reuters <- read.table("reuters.txt.gz", header=TRUE)
 reuters$Content <- as.character(reuters$Content)  
 reuters$Topic <- factor(reuters$Topic)
 
