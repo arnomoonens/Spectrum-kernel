@@ -1,11 +1,11 @@
 library(kernlab)
 library(ggplot2)
 require(plot3D)
-source("coSequenceCPP.R")
+source("connect.R")
 source("gapkernel.R")
 
 set.seed(6)
-N= 50
+N= 30
 reuters <- read.table("reuters.txt.gz", header=T)
 reuters <- reuters[reuters$Topic == "crude" | reuters$Topic == "grain" | reuters$Topic == "coffee",]
 reuters <- reuters[sample(1:nrow(reuters),N),]
@@ -60,13 +60,14 @@ write( paste("Experiment with ",as.character(N)," texts"),file = 'ResultsCluster
 write.table(table(reuters$Topic),file = 'ResultsClustering.txt', append=TRUE ,sep = ",")
 clusters = 3
 set.seed(20)
+
 n = bestSubSeqLength("spectrum", reuters$Content, clusters)
 k <- stringdot("spectrum",length=n)
 K <- kernelMatrix(k, reuters$Content)
 R<-getClusters(K,clusters,T)
 writeInFile("SPECTRUM KERNEL",R)
 
-k <- stringdot("CONSTANT")
+k <- stringdot("constant",length=2)
 K <- kernelMatrix(k, reuters$Content)
 R<-getClusters(K,clusters,T)
 writeInFile("CONSTANT KERNEL",R)
@@ -101,8 +102,8 @@ k <- makeCppKernel(lambdas[fc[1]], fc[2])
 K <- kernelMatrix(k, reuters$Content)
 writeInFile("GAP KERNEL",R)
 
-k <- new("kernel", .Data=coSequenceKernelCPP, kpar=list())
+k <- new("kernel", .Data=connect, kpar=list())
 K <- kernelMatrix(k ,reuters$Content)
 R <-getClusters(K,clusters,T)
-writeInFile("COSEQUENCE KERNEL",R)
+writeInFile("CONNECT",R)
 
