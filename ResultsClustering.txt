@@ -3,8 +3,8 @@ Experiment with  10  texts
 "1","coffee",1
 "2","crude",4
 "3","grain",5
-Experiment with  20  texts
+Experiment with  10  texts
 "Var1","Freq"
 "1","coffee",1
-"2","crude",8
-"3","grain",11
+"2","crude",4
+"3","grain",5
