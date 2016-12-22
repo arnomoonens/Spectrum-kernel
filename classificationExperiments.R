@@ -6,21 +6,22 @@ source("coSequenceCPP.R")
 set.seed(6)
 data <- read.csv("data.csv", stringsAsFactors = FALSE)
 data <- data[-1]  # Remove first column (indices)
-data <- subset(data, target<2)  # Only use three different target values
+data <- subset(data, target<=2) # Only use three different target values
 data <- data[sample(nrow(data), round(0.15 * nrow(data))),]
 
+# Text preprocessing
 docs <- Corpus(VectorSource(data$text))
 docs <- tm_map(docs, removePunctuation)
 docs <- tm_map(docs, stripWhitespace)
 docs <- tm_map(docs, content_transformer(tolower))
-data$text <- sapply(docs, function(x){x$content})
+data$text <- sapply(docs, function(x){x$content}) # Get back the transformed text
 
-data$text <- substr(data$text, 1, 750)  # Limit number of characters per text
+data$text <- substr(data$text, 1, 750) # Limit number of characters per text
 
 data$target <- factor(data$target)
 
 (N <- nrow(data))
-train.indices <- sample(N,round(4*N/5))
+train.indices <- sample(N,round(4*N/5)) # Use 80% as training data
 
 # Total number of data points
 length(data$target)
@@ -28,33 +29,10 @@ length(data$target)
 # Number of training examples per topic
 table(data$target)
 
-#k <- stringdot("spectrum", length=5, normalized=T)
-# k <- makeCppKernel(0.5, 5)
-# K <- kernelMatrix(k, data$text)
-# 
-# ntrain <- round(N*2/3)     # number of training examples
-# tindex <- sample(N,ntrain) # indices of training examples
-# 
-# ## The fit a SVM in the train part
-# svm.train <- ksvm (K[tindex,tindex],data$target[tindex], type="C-svc", kernel='matrix')
-# 
-# # First the test-vs-train matrix
-# testK <- K[-tindex,tindex]
-# # then we extract the SV from the train
-# testK <- testK[,SVindex(svm.train),drop=FALSE]
-# 
-# # Now we can predict the test data
-# # Warning: here we MUST convert the matrix testK to a 'kernelMatrix'
-# y1 <- predict(svm.train,as.kernelMatrix(testK))
-# 
-# table (pred=y1, truth=data$target[-tindex])
-# 
-# cat('Error rate = ',100*sum(y1!=data$target[-tindex])/length(y1),'%')
-
 calculate.error  <- function(predictions, true.values) {sum(predictions != true.values) / NROW(true.values)}
 
-data.train <- data[train.indices,]
-data.test <- data[-train.indices,]
+data.train <- data[train.indices,] # 80% training data
+data.test <- data[-train.indices,] # Remaining = 20% test data
 
 # Cross-validation for subsequence length
 k <- 10 # 10-fold cross-validation
@@ -63,13 +41,14 @@ N.train <- NROW(data.train)
 s <- sample(rep(1:k, length=N.train), N.train, replace=FALSE) # Say for each data point in which fold it needs to go
 
 # Gap kernel
+cat("Gap kernel\n")
 subseq.lengths <- c(2:6)
 lambdas <- c(0.3, 0.5, 0.7, 1.0)
-configs <- matrix(nrow=0, ncol=2, dimnames=list(c(), c("lambda", "p")))
+gap.configs <- matrix(nrow=0, ncol=2, dimnames=list(c(), c("lambda", "p")))
 gap.mean.errors <- c()
 for (subseq.length in subseq.lengths) {
   for(lambda in lambdas) {
-    configs <- rbind(configs, c(lambda, subseq.length))
+    gap.configs <- rbind(gap.configs, c(lambda, subseq.length))
     kernel <- makeCppKernel(lambda, subseq.length)
     K <- kernelMatrix(kernel, data.train$text)
     cv.errors <- c()
@@ -89,24 +68,25 @@ for (subseq.length in subseq.lengths) {
     }
     m <- mean(cv.errors)
     gap.mean.errors <- c(gap.mean.errors, m)
-    cat("Combination done")
+    cat("Combination", idx, "done\n")
   }
 }
 min.error.idx <- which.min(gap.mean.errors)
 gap.best.config <- gap.configs[min.error.idx,]
 gap.best.subseq.length <- gap.best.config[["p"]]
 gap.best.lambda <- gap.best.config[["lambda"]]
-cat("Best subsequence length =", gap.best.subseq.length)
-cat("Best lambda =", gap.best.lambda)
+cat("Best subsequence length =", gap.best.subseq.length, "\n")
+cat("Best lambda =", gap.best.lambda, "\n")
 
 gap.kernel = makeCppKernel(gap.best.lambda, gap.best.subseq.length)
 gap.model <- ksvm(data.train$text, data.train$target, type="C-svc", scaled=c(), kernel=gap.kernel)
 
 gap.predictions <- predict(gap.model, data.test$text)
 gap.error.test <- calculate.error(gap.predictions, data.test$target)
-cat("Error on test set:", gap.error.test)
+cat("Error on test set:", gap.error.test, "\n\n")
 
 # Spectrum kernel
+cat("Spectrum kernel\n")
 substring.lengths <- c(2:6)
 spectrum.mean.errors <- c()
 for (substring.length in substring.lengths) {
@@ -132,16 +112,17 @@ for (substring.length in substring.lengths) {
 }
 min.error.idx <- which.min(spectrum.mean.errors)
 spectrum.best.substring.length <- substring.lengths[[min.error.idx]]
-cat("Best substring length =", spectrum.best.substring.length)
+cat("Best substring length =", spectrum.best.substring.length, "\n")
 
 spectrum.kernel = stringdot("spectrum", length = spectrum.best.substring.length)
 spectrum.model <- ksvm(data.train$text, data.train$target, type="C-svc", scaled=c(), kernel=spectrum.kernel)
 
 spectrum.predictions <- predict(spectrum.model, data.test$text)
 spectrum.error.test <- calculate.error(spectrum.predictions, data.test$target)
-cat("Error on test set:", spectrum.error.test)
+cat("Error on test set:", spectrum.error.test, "\n\n")
 
 # Boundrange kernel
+cat("Boundrange kernel\n")
 substring.lengths <- c(2:6)
 boundrange.mean.errors <- c()
 for (substring.length in substring.lengths) {
@@ -167,16 +148,17 @@ for (substring.length in substring.lengths) {
 }
 min.error.idx <- which.min(boundrange.mean.errors)
 boundrange.best.substring.length <- substring.lengths[[min.error.idx]]
-cat("Best substring length =", boundrange.best.substring.length)
+cat("Best substring length =", boundrange.best.substring.length, "\n")
 
 boundrange.kernel = stringdot("boundrange", length = boundrange.best.substring.length)
 boundrange.model <- ksvm(data.train$text, data.train$target, type="C-svc", scaled=c(), kernel=boundrange.kernel)
 
 boundrange.predictions <- predict(boundrange.model, data.test$text)
 boundrange.error.test <- calculate.error(boundrange.predictions, data.test$target)
-cat("Error on test set:", boundrange.error.test)
+cat("Error on test set:", boundrange.error.test, "\n\n")
 
 # Constant kernel
+cat("Constant kernel\n")
 substring.lengths <- c(2:6)
 const.mean.errors <- c()
 for (substring.length in substring.lengths) {
@@ -202,16 +184,17 @@ for (substring.length in substring.lengths) {
 }
 min.error.idx <- which.min(const.mean.errors)
 const.best.substring.length <- substring.lengths[[min.error.idx]]
-cat("Best substring length =", const.best.substring.length)
+cat("Best substring length =", const.best.substring.length, "\n")
 
 const.kernel = stringdot("constant", length = const.best.substring.length)
 const.model <- ksvm(data.train$text, data.train$target, type="C-svc", scaled=c(), kernel=const.kernel)
 
 const.predictions <- predict(const.model, data.test$text)
 const.error.test <- calculate.error(const.predictions, data.test$target)
-cat("Error on test set:", const.error.test)
+cat("Error on test set:", const.error.test, "\n\n")
 
 # Exponential kernel
+cat("Exponential kernel\n")
 lambdas <- c(1.1, 1.3, 1.5, 1.7, 1.9)
 exp.mean.errors <- c()
 for (lambda in lambdas) {
@@ -237,19 +220,20 @@ for (lambda in lambdas) {
 }
 min.error.idx <- which.min(exp.mean.errors)
 exp.best.lambda <- lambdas[[min.error.idx]]
-cat("Best lambda =", exp.best.lambda)
+cat("Best lambda =", exp.best.lambda, "\n")
 
-exp.kernel = stringdot("exponential", lambda = exp.best.lambda)
+exp.kernel = stringdot("exponential", lambda = exp.best.lambda, length = 2)
 exp.model <- ksvm(data.train$text, data.train$target, type="C-svc", scaled=c(), kernel=exp.kernel)
 
 exp.predictions <- predict(exp.model, data.test$text)
 exp.error.test <- calculate.error(exp.predictions, data.test$target)
-cat("Error on test set:", exp.error.test)
+cat("Error on test set:", exp.error.test, "\n\n")
 
-# Cosequence kernel
-coseq.kernel <- new("kernel", .Data=coSequenceKernelCPP, kpar=list())
-coseq.model <- ksvm(data.train$text, data.train$target, type="C-svc", scaled=c(), kernel=coseq.kernel)
+# Connect kernel
+cat("Connect kernel\n")
+connect.kernel <- new("kernel", .Data=coSequenceKernelCPP, kpar=list())
+connect.model <- ksvm(data.train$text, data.train$target, type="C-svc", scaled=c(), kernel=connect.kernel)
 
-coseq.predictions <- predict(coseq.model, data.test$text)
-coseq.error.test <- calculate.error(coseq.predictions, data.test$target)
-cat("Error on test set:", coseq.error.test)
+connect.predictions <- predict(connect.model, data.test$text)
+connect.error.test <- calculate.error(connect.predictions, data.test$target)
+cat("Error on test set:", connect.error.test)
