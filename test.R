@@ -30,7 +30,7 @@ t<-time.taken
 
 k <- stringdot("spectral",length=6,normalized = TRUE)
 K <- kernelMatrix(k, data$text)
-k3 <- makeCppKernel(0.7, 5)
+k3 <- makeGapKernel(0.7, 5)
 start.time <-Sys.time()
 K3 <- kernelMatrix(k3, data$text)
 end.time <- Sys.time()

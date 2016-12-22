@@ -49,7 +49,7 @@ gap.mean.errors <- c()
 for (subseq.length in subseq.lengths) {
   for(lambda in lambdas) {
     gap.configs <- rbind(gap.configs, c(lambda, subseq.length))
-    kernel <- makeCppKernel(lambda, subseq.length)
+    kernel <- makeGapKernel(lambda, subseq.length)
     K <- kernelMatrix(kernel, data.train$text)
     cv.errors <- c()
     for (idx in folds.indices) {
@@ -78,7 +78,7 @@ gap.best.lambda <- gap.best.config[["lambda"]]
 cat("Best subsequence length =", gap.best.subseq.length, "\n")
 cat("Best lambda =", gap.best.lambda, "\n")
 
-gap.kernel = makeCppKernel(gap.best.lambda, gap.best.subseq.length)
+gap.kernel = makeGapKernel(gap.best.lambda, gap.best.subseq.length)
 gap.model <- ksvm(data.train$text, data.train$target, type="C-svc", scaled=c(), kernel=gap.kernel)
 
 gap.predictions <- predict(gap.model, data.test$text)
