@@ -33,12 +33,12 @@ getClusters <- function( kernelMatrix, k, bool ){
     sum (withinss(sc))
   }
 }
+
 impactK <- function( M ,s ,l ,k , data, ... ){
   vec <- sapply(seq(2,s), function(x){ 
                     kp <- stringdot(M, length = x, lambda = l)
                     K <- kernelMatrix( kp, data )
                     getClusters(K, k, FALSE) })
-
 }
 
 minLength<- function( TextSet ){
