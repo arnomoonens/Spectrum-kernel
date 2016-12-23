@@ -49,5 +49,5 @@ long double cppKernel(std::string x, std::string y, double lambda, unsigned int 
 
 // (test) code to run after compilation
 /*** R
-cppKernel("science is organized knowledge", "wisdom is organized life", 0.7, 2)
+
 */

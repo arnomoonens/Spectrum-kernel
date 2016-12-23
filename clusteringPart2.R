@@ -53,7 +53,7 @@ K <- kernelMatrix(k ,reuters$Content)
 findBestK(K,limit,"CONNECT",kReal ) 
 
 
-k <- makeCppKernel(0.8, 7)
+k <- makeGapKernel(0.8, 7)
 K <- kernelMatrix(k, reuters$Content)
 findBestK(K,limit,"GAP",kReal ) 
 

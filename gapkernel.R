@@ -77,7 +77,7 @@ gapkernel2 <- function(lambda, p) {
 }
 
 Rcpp::sourceCpp('gapkernel.cpp')
-makeCppKernel <- function(lambda, p) {
+makeGapKernel <- function(lambda, p) {
   f <- function(x, y) {
     return(cppKernel(x, y, lambda, p))
   }

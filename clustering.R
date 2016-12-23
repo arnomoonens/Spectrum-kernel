@@ -98,7 +98,7 @@ writeInFile("EXPONENTIAL KERNEL",R)
 bestPossibleClustering <- function(lambdas, n , data ,k ){
   M <- matrix(nrow = length(lambdas), ncol = n-1)
   for(i in 1:length(lambdas)) {
-    M[i,] =sapply(seq(2,n), function(x){ kp = makeCppKernel(lambdas[i],x) 
+    M[i,] =sapply(seq(2,n), function(x){ kp = makeGapKernel(lambdas[i],x) 
                                          K <- kernelMatrix(kp, data)
                                          getClusters(K,k,FALSE) })
   }
@@ -107,7 +107,7 @@ bestPossibleClustering <- function(lambdas, n , data ,k ){
 ##Launch the gap kernel
 lambdas = seq(0.1,0.9,0.1)
 fc = bestPossibleClustering(lambdas, 6, reuters$Content,clusters)
-k <- makeCppKernel(lambdas[fc[1]], fc[2])
+k <- makeGapKernel(lambdas[fc[1]], fc[2])
 K <- kernelMatrix(k, reuters$Content)
 writeInFile("GAP KERNEL",R)
 ##Clustering using the connect kernel
