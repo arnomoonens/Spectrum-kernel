@@ -3,8 +3,7 @@ library(tm)
 source("connect.R")
 source("gapkernel.R")
 
-
-set.seed(6)
+#set.seed(6)
 N= 10 # number of data point
 reuters <- read.table("reuters.txt.gz", header=TRUE)
 reuters <- reuters[reuters$Topic == "crude" | reuters$Topic == "grain" | reuters$Topic == "coffee",]
@@ -23,13 +22,13 @@ length(reuters$Topic)
 table(reuters$Topic)
 
 getClusters <- function( kernelMatrix, k, bool ){
-  sc <- kkmeans(kernelMatrix, reuters$Topic, centers = k, nstart = 10)
-  if(bool==TRUE){
+  sc <- kkmeans(kernelMatrix, centers = k, nstart = 10)
+  if( bool == TRUE){
     vec <-vector(length = N)
     for(x in 1:N){ vec[x] = sc[x]}
     list(table(vec, reuters$Topic), withinss(sc), sum(withinss(sc)) )
   }
-  if(bool == FALSE){
+  if( bool == FALSE ){
     sum (withinss(sc))
   }
 }
@@ -39,6 +38,7 @@ impactK <- function( M ,s ,l ,k , data, ... ){
                     kp <- stringdot(M, length = x, lambda = l)
                     K <- kernelMatrix( kp, data )
                     getClusters(K, k, FALSE) })
+  vec
 }
 
 minLength<- function( TextSet ){
@@ -47,7 +47,7 @@ minLength<- function( TextSet ){
 
 bestSubSeqLength <- function( Kernel, data, clusters, ... ){
   values <- impactK(Kernel, minLength(data), 1 , clusters, data)
-  which.min(values)
+  (which.min(values)+1) 
 }
 
 bestDecayFactor <- function( Kernel, Data, cluster, range ){
@@ -67,7 +67,7 @@ writeInFile<- function(text,R){
 write( paste("Experiment with ",as.character(N)," texts"),file = 'ResultsClustering.txt', append=TRUE)
 write.table(table(reuters$Topic),file = 'ResultsClustering.txt', append=TRUE ,sep = ",")
 clusters = 3
-set.seed(20)
+#set.seed(20)
 
 ##Calculate the clusteres using the spectrum kernel
 n = bestSubSeqLength("spectrum", reuters$Content, clusters)
@@ -76,7 +76,7 @@ K <- kernelMatrix(k, reuters$Content)
 R <- getClusters(K,clusters,TRUE)
 writeInFile("SPECTRUM KERNEL",R)
 ##Calculate the clusteres using the constant kernel
-k <- stringdot("constant",length=2)
+k <- stringdot("constant",length = 2)
 K <- kernelMatrix(k, reuters$Content)
 R<-getClusters(K,clusters,TRUE)
 writeInFile("CONSTANT KERNEL",R)
@@ -84,12 +84,12 @@ writeInFile("CONSTANT KERNEL",R)
 n = bestSubSeqLength("boundrange", reuters$Content, clusters)
 k <- stringdot("boundrange",length=n)
 K <- kernelMatrix(k, reuters$Content)
-R<-getClusters(K,clusters,T)
+R<-getClusters(K,clusters,TRUE)
 writeInFile("BOUNDRANGE KERNEL",R)
 ##Calculate the cluster using the exponential kernel
 lamdas = seq(1.2,2,0.2)
 M <- bestDecayFactor("exponential",reuters$Content,clusters, lamdas)
-k <- stringdot("exponential",length= M[2], lambda = lamdas[M[1]] )
+k <- stringdot("exponential",length= M[2]+1, lambda = lamdas[M[1]] )
 K <- kernelMatrix(k, reuters$Content)
 R<-getClusters(K,clusters,T)
 writeInFile("EXPONENTIAL KERNEL",R)
