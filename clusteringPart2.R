@@ -4,11 +4,12 @@ library(kernlab)
 library(ggplot2)
 require(plot3D)
 library(tm)
-source("clustering.R")
-set.seed(6)
+source("connect.R")
+source("gapkernel.R")
 
 findBestK <- function(K, limit,name, kReal){
   ss <-vector(length = limit)
+  set.seed(20)
   for( i in seq(2,limit+1)) {
           possibleError <- tryCatch({
             ss[i-1] <- sum(withinss(kkmeans(K, centers = i, nstart = 10)))
@@ -31,8 +32,10 @@ reuters$Content <- as.character(reuters$Content)
 reuters$Topic <- factor(reuters$Topic)
 ## Sample a number cat of categories
 cat = 15
+set.seed(6)
 topics <- factor( sample(unique(reuters$Topic),cat) )
 reuters <- reuters[ sapply(reuters[,1], function (x) x %in% topics) , ]
+set.seed(6)
 reuters <- reuters[sample(1:nrow(reuters),N),]
 ##Preprocess the data
 docs <- Corpus(VectorSource(reuters$Content))
@@ -43,21 +46,24 @@ reuters$Content <- sapply(docs, function(x){x$content})
 ##Correct number of categories
 kReal = length(unique(reuters[,1]))
 
-set.seed(20)
 
-limit = 8
-k <- stringdot("exponential",length= 6, lambda = 2 )
-K <- kernelMatrix(k, reuters$Content)
-findBestK(K, limit,"EXPONENTIAL",kReal ) 
+limit = 11
 
-k <- stringdot("spectrum", length=6)
+k <- stringdot("spectrum", length=2)
 K <- kernelMatrix(k, reuters$Content)
 findBestK(K,limit,"SPECTRUM",kReal ) 
 
-k <- new("kernel", .Data=coSequenceKernelCPP, kpar=list())
+k <- new("kernel", .Data=connect, kpar=list())
 K <- kernelMatrix(k ,reuters$Content)
 findBestK(K,limit,"CONNECT",kReal ) 
 
+k <- makeGapKernel(0.1, 8)
+K <- kernelMatrix(k, reuters$Content)
+findBestK(K,limit,"GAP",kReal ) 
+
+k <- stringdot("exponential",length= 4, lambda = 1.4 )
+K <- kernelMatrix(k, reuters$Content)
+findBestK(K, limit,"EXPONENTIAL",kReal ) 
 
 
 
